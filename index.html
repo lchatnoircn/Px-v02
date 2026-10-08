@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#050505">
+<title>PX</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-title" content="PX">
+<style>
+:root{--bg:#050505;--fg:#f2f2f2;--mut:#8a8a8a;--ac:#f07a2a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:#050505}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;background:#050505;color:var(--fg);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overscroll-behavior:none}
+#app{height:100%;display:flex;flex-direction:column}
+header{display:flex;justify-content:space-between;align-items:flex-start;padding:18px 22px 0;flex-shrink:0}
+#ttl{font-size:44px;font-weight:800;letter-spacing:.14em;line-height:1;margin:0}
+#sub{color:var(--mut);letter-spacing:.14em;font-size:15px;margin-top:8px}
+#pill{display:flex;align-items:center;gap:8px;border:1px solid #2a2a2a;background:#0e0e0e;border-radius:22px;padding:11px 18px;color:var(--mut);font-weight:700;letter-spacing:.18em;font-size:14px}
+#pill i{width:9px;height:9px;border-radius:50%;background:#666}
+#pill.on i{background:var(--ac)}
+.tab{display:none;flex:1;min-height:0;overflow-y:auto;padding:16px 20px 24px;-webkit-overflow-scrolling:touch}
+.tab.on{display:block}
+#t0.on{display:flex;flex-direction:column;padding:0}
+.stage{position:relative;flex:1;min-height:0}
+#orb{position:absolute;inset:0;touch-action:manipulation}
+#cap{min-height:92px;max-height:150px;overflow-y:auto;padding:6px 26px 14px;text-align:center;color:#8a8a8a;font-size:18px;line-height:1.45}
+#cap b{display:block;color:#d9d9d9;font-weight:500;margin-top:6px}
+.bar{display:flex;gap:12px;padding:14px 22px;border-top:1px solid #1c1c1c;flex-shrink:0}
+input,select,textarea{width:100%;background:#131313;border:1px solid #2a2a2a;color:var(--fg);border-radius:14px;padding:12px 14px;font:inherit;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--ac)}
+input[type=range]{padding:0;height:30px;accent-color:var(--ac)}
+input[type=color]{height:44px;padding:4px}
+input[type=checkbox]{width:auto}
+.bar input{height:56px;border-radius:16px}
+button{font:inherit;color:inherit;cursor:pointer}
+.send{width:68px;height:62px;border-radius:16px;border:0;background:color-mix(in srgb,var(--ac) 38%,#000);color:#000;display:grid;place-items:center;flex-shrink:0}
+.send svg{width:26px;height:26px}
+.b{background:color-mix(in srgb,var(--ac) 30%,#0a0a0a);border:1px solid color-mix(in srgb,var(--ac) 55%,#000);border-radius:12px;padding:11px 16px;color:#fff}
+.b.g{background:#141414;border-color:#2a2a2a}
+.card{background:#0e0e0e;border:1px solid #1f1f1f;border-radius:16px;padding:14px;margin-bottom:14px}
+h2{font-size:20px;margin:4px 0 12px}
+h3{font-size:15px;margin:0 0 8px;color:#cfcfcf}
+.mut{color:var(--mut);font-size:14px}
+label{display:block;color:#a8a8a8;font-size:14px;margin:12px 0 6px}
+.row{display:flex;gap:10px;align-items:center}
+.row>*{flex:1}
+.sw{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.sw span{width:34px;height:34px;border-radius:50%;border:2px solid #333}
+.res{border-top:1px solid #1f1f1f;padding:10px 0}
+.res:first-child{border:0}
+.res b{display:block}
+.res p{margin:4px 0 0;color:#a8a8a8;font-size:14px}
+.pk{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid #1f1f1f}
+.pk:first-of-type{border:0}
+.prog{height:4px;background:#1c1c1c;border-radius:2px;margin-top:10px;overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--ac)}
+nav{display:flex;border-top:1px solid #1c1c1c;flex-shrink:0;background:#050505}
+nav button{flex:1;background:none;border:0;color:#8f8f8f;font-size:11.5px;font-weight:600;padding:10px 0 8px;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0}
+nav button span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+nav button.on{color:var(--ac)}
+nav svg{width:28px;height:28px}
+#toast{position:fixed;left:50%;bottom:calc(110px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#1c1c1c;border:1px solid #333;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;max-width:88%;text-align:center}
+#toast.on{opacity:1}
+.cn{position:relative;aspect-ratio:2.39/1;background:radial-gradient(ellipse at 50% 40%,color-mix(in srgb,var(--ac) 24%,#000),#000 75%);border-top:12px solid #000;border-bottom:12px solid #000;border-radius:4px;display:grid;place-items:center;text-align:center;padding:8px 18px;overflow:hidden;box-shadow:0 0 0 1px #2a2a2a,0 18px 36px #000}
+.cn:after{content:'';position:absolute;inset:0;background:repeating-radial-gradient(#fff2 0 1px,transparent 1px 3px);opacity:.22;mix-blend-mode:overlay;pointer-events:none;animation:gr .5s steps(3) infinite}
+.cn b{font:300 17px/1.35 Georgia,'Times New Roman',serif;letter-spacing:.26em;text-transform:uppercase;color:#f3e6d0;animation:fi 1.8s ease both}
+.cn i{display:block;width:56px;height:1px;background:var(--ac);margin:10px auto 0}
+@keyframes fi{from{opacity:0;letter-spacing:.6em;filter:blur(6px)}}
+@keyframes gr{50%{transform:translate(-2px,1px)}}
+body.cine:after{content:'';position:fixed;inset:0;z-index:9;pointer-events:none;background:radial-gradient(ellipse at center,transparent 55%,#000c 100%),repeating-radial-gradient(#fff1 0 1px,transparent 1px 3px)}
+</style></head>
+<body>
+<div id="app">
+<header><div><h1 id="ttl">PX</h1><div id="sub"></div></div><div id="pill"><i></i><span id="pt">OFFLINE</span></div></header>
+<section class="tab on" id="t0">
+  <div class="stage"><canvas id="orb"></canvas></div>
+  <div id="cap"></div>
+  <div class="bar"><input id="q" enterkeyhint="send" autocomplete="off"><button class="send" id="go" aria-label="Envoyer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V5M5 11l7-7 7 7"/></svg></button></div>
+</section>
+<section class="tab" id="t1"></section>
+<section class="tab" id="t2"></section>
+<section class="tab" id="t3"></section>
+<section class="tab" id="t4"></section>
+<nav id="nav"></nav>
+</div>
+<div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s);
+const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
+const DS={name:'PX',sub:'100% hors ligne',ac:'#f07a2a',tabs:['PX','Commandes','Savoir','Réglages','LCN'],detail:2,speed:1,lw:1,lang:'fr-FR',rate:1,voice:'',user:'',talk:true,vp:'h1',wifi:true,bt:false,cine:false};
+let S={...DS,...ld('px_s',{})},C=ld('px_c',[]),st='idle',segs=[],bd=0;
+const nz=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let tt;const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2800)};
+
+/* ---------- Navigation ---------- */
+const IC=[
+`<circle cx='12' cy='12' r='8' fill='none' stroke='currentColor' stroke-width='2.6'/>`,
+`<rect x='3' y='4' width='18' height='16' rx='3' fill='currentColor'/><path d='M7 9l3 2-3 2M12 14h4' stroke='#050505' stroke-width='1.8' fill='none' stroke-linecap='round'/>`,
+`<g fill='currentColor'><rect x='3' y='4' width='4' height='16' rx='1'/><rect x='9' y='4' width='4' height='16' rx='1'/><rect x='15' y='6' width='4' height='14' rx='1' transform='rotate(-12 17 13)'/></g>`,
+`<g fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='3.2'/><path d='M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1'/></g>`,
+`<g fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='8' r='3.6'/><path d='M4.5 20c.8-4 3.7-6 7.5-6s6.7 2 7.5 6'/></g>`];
+let cur=0;
+function nav(){$('#nav').innerHTML=S.tabs.map((n,i)=>`<button class="${i==cur?'on':''}" onclick="go(${i})"><svg viewBox="0 0 24 24">${IC[i]}</svg><span>${esc(n)}</span></button>`).join('')}
+function go(i){cur=i;document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('on',j==i));nav();if(i==1)rc();if(i==2)rk();if(i==3)rset();if(i==4)rl();if(i==0)setTimeout(rs,30)}
+
+/* ---------- Sphère nid-d'abeilles (polyèdre de Goldberg) ---------- */
+function build(d){
+ const t=(1+Math.sqrt(5))/2,nm=p=>{const l=Math.hypot(...p);return p.map(x=>x/l)};
+ let v=[[-1,t,0],[1,t,0],[-1,-t,0],[1,-t,0],[0,-1,t],[0,1,t],[0,-1,-t],[0,1,-t],[t,0,-1],[t,0,1],[-t,0,-1],[-t,0,1]].map(nm);
+ let f=[[0,11,5],[0,5,1],[0,1,7],[0,7,10],[0,10,11],[1,5,9],[5,11,4],[11,10,2],[10,7,6],[7,1,8],[3,9,4],[3,4,2],[3,2,6],[3,6,8],[3,8,9],[4,9,5],[2,4,11],[6,2,10],[8,6,7],[9,8,1]];
+ for(let s=0;s<d;s++){const m={},nf=[];
+  const mid=(a,b)=>{const k=a<b?a+'_'+b:b+'_'+a;if(m[k]==null){v.push(nm(v[a].map((x,i)=>x+v[b][i])));m[k]=v.length-1}return m[k]};
+  f.forEach(([a,b,c])=>{const ab=mid(a,b),bc=mid(b,c),ca=mid(c,a);nf.push([a,ab,ca],[b,bc,ab],[c,ca,bc],[ab,bc,ca])});f=nf}
+ const ce=f.map(([a,b,c])=>nm([0,1,2].map(i=>v[a][i]+v[b][i]+v[c][i]))),E={};
+ f.forEach((fc,i)=>{for(let j=0;j<3;j++){const a=fc[j],b=fc[(j+1)%3],k=a<b?a+'_'+b:b+'_'+a;(E[k]=E[k]||[]).push(i)}});
+ return Object.values(E).filter(e=>e.length==2).map(([i,j])=>[...ce[i],...ce[j]]);
+}
+const cv=$('#orb'),cx=cv.getContext('2d');let W=0,H=0,dpr=1,lvl=.05,ay0=0,lt=0;
+function rs(){const r=cv.parentElement.getBoundingClientRect();dpr=window.devicePixelRatio||1;W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr}
+new ResizeObserver(rs).observe(cv.parentElement);
+function fr(ms){
+ requestAnimationFrame(fr);if(cur!=0||!W)return;
+ const t=ms/1000,dt=Math.min(t-lt,.05);lt=t;
+ const tg=st=='listen'?.5+.25*Math.sin(t*5):st=='speak'?.3+.45*Math.abs(Math.sin(t*9)*Math.sin(t*3.3)):st=='think'?.25+.1*Math.sin(t*8):.04+.03*Math.sin(t*1.5);
+ lvl+=(tg-lvl)*.12;
+ ay0+=dt*(.22+lvl*.9)*S.speed;
+ cx.setTransform(dpr,0,0,dpr,0,0);cx.clearRect(0,0,W,H);
+ const R=Math.min(W,H)*.4*(1+lvl*.1),ca=Math.cos(ay0),sa=Math.sin(ay0),ax=.42,cX=Math.cos(ax),sX=Math.sin(ax),mx=W/2,my=H/2,w=lvl*.06;
+ const P=(x,y,z)=>{const k=1+w*Math.sin(x*4+z*3+t*6);let X=(x*ca+z*sa)*k,Z=(-x*sa+z*ca)*k,Y=y*k;const Y2=Y*cX-Z*sX,Z2=Y*sX+Z*cX,f=3/(3-Z2);return[mx+X*R*f,my+Y2*R*f,Z2]};
+ const fp=new Path2D(),bp=new Path2D();
+ for(const s of segs){const a=P(s[0],s[1],s[2]),b=P(s[3],s[4],s[5]);const p=(a[2]+b[2])>0?fp:bp;p.moveTo(a[0],a[1]);p.lineTo(b[0],b[1])}
+ cx.strokeStyle=S.ac;cx.lineJoin=cx.lineCap='round';
+ cx.globalAlpha=.28;cx.lineWidth=.5*S.lw;cx.stroke(bp);
+ cx.shadowColor=S.ac;cx.shadowBlur=3+lvl*14;cx.globalAlpha=.9;cx.lineWidth=.8*S.lw;cx.stroke(fp);
+ cx.globalAlpha=.55;cx.lineWidth=.7*S.lw;cx.beginPath();cx.arc(mx,my,R*(1.0),0,7);cx.stroke();
+ cx.shadowBlur=0;cx.globalAlpha=1;
+}
+
+/* ---------- Savoir : base locale IndexedDB ---------- */
+const db=new Promise((res,rej)=>{try{const r=indexedDB.open('px_kb',1);r.onupgradeneeded=()=>r.result.createObjectStore('a',{keyPath:'id'});r.onsuccess=()=>res(r.result);r.onerror=()=>rej()}catch(e){rej()}});
+const all=async()=>{try{const d=await db;return await new Promise(r=>{const q=d.transaction('a').objectStore('a').getAll();q.onsuccess=()=>r(q.result);q.onerror=()=>r([])})}catch{return[]}};
+const put=async a=>{try{const d=await db;return await new Promise(r=>{const t=d.transaction('a','readwrite'),s=t.objectStore('a');a.forEach(x=>s.put(x));t.oncomplete=t.onerror=()=>r()})}catch{}};
+const wipeKb=async()=>{try{const d=await db;return await new Promise(r=>{const t=d.transaction('a','readwrite');t.objectStore('a').clear();t.oncomplete=()=>r()})}catch{}};
+const D=(i,t,x)=>({i,t,a:x.trim().split('\n').map(l=>l.split(' :: '))});
+const DOCS=[
+D('🔌','Arduino et commandes',`
+Cartes :: Uno (ATmega328P, 5 V), Nano, Mega 2560 (54 E/S), Leonardo (USB natif), Due (ARM 3,3 V), Nano Every. Les ESP32 et ESP8266 se programment aussi avec l’IDE Arduino.
+Structure d’un sketch :: void setup(){} s’exécute une fois, void loop(){} tourne en boucle.
+Entrées sorties numériques :: pinMode(pin, OUTPUT ou INPUT ou INPUT_PULLUP) ; digitalWrite(pin, HIGH ou LOW) ; digitalRead(pin).
+Analogique et PWM :: analogRead(A0) donne 0 à 1023 ; analogWrite(pin, 0 à 255) sur les broches ~ ; map(v,a,b,c,d) ; constrain(v,min,max).
+Temps :: delay(ms) ; delayMicroseconds(us) ; millis() et micros() pour mesurer sans bloquer.
+Port série :: Serial.begin(9600) ; Serial.println(x) ; Serial.available() ; Serial.read() ; Serial.readStringUntil('\n').
+Interruptions :: attachInterrupt(digitalPinToInterrupt(2), fonction, RISING ou FALLING ou CHANGE) ; noInterrupts() ; interrupts().
+Bus I2C et SPI :: Wire.begin(), Wire.beginTransmission(adr), Wire.write(), Wire.endTransmission(), Wire.requestFrom() ; SPI.begin(), SPI.transfer().
+Bibliothèques :: #include <Servo.h> (servo.attach(9), servo.write(90)) ; <Wire.h> ; <SPI.h> ; <EEPROM.h> (EEPROM.update).
+arduino-cli :: arduino-cli core install arduino:avr ; board list ; compile -b arduino:avr:uno Sketch ; upload -p /dev/ttyACM0 -b arduino:avr:uno Sketch ; monitor -p /dev/ttyACM0. Sous Linux : sudo usermod -aG dialout $USER (uucp sur Arch).
+`),
+D('🍓','Raspberry Pi et Odroid',`
+Raspberry Pi modèles :: Zero 2 W, 3B+, 4 (2, 4 ou 8 Go), 5 (PCIe), Pico (RP2040, microcontrôleur). OS : Raspberry Pi OS, installé avec Raspberry Pi Imager.
+Commandes Raspberry :: raspi-config ; vcgencmd measure_temp ; vcgencmd get_throttled ; pinout ; cat /proc/cpuinfo. La config est dans /boot/firmware/config.txt.
+GPIO :: Python : from gpiozero import LED ; LED(17).on() ; en ligne de commande : gpioinfo, gpioset gpiochip0 17=1 (libgpiod). Numérotation BCM.
+Interfaces :: raspi-config, Interface Options : SSH, I2C, SPI, Serial. Tests : i2cdetect -y 1 ; ls /dev/spidev*.
+Réseau Pi :: ssh pi@raspberrypi.local ; hostname -I ; nmcli device wifi connect SSID password MDP ; sudo systemctl enable --now ssh.
+Odroid modèles :: C4 (Amlogic S905X3), N2+ (S922X), XU4 (Exynos 5422), HC4 (NAS), M1 (RK3568). Systèmes : Ubuntu, Armbian, Android. Flash avec balenaEtcher.
+Odroid usage :: GPIO via libgpiod (gpiodetect, gpioinfo) ou WiringPi adapté Odroid ; l’affichage se règle dans le config.ini de la partition boot sur les images Hardkernel.
+`),
+D('💻','Langages : bases et commandes',`
+Python :: print() ; types int float str list dict tuple set ; if/elif/else ; for x in range(n) ; def f(a): return a ; with open('f') as f ; [x*2 for x in l] ; try/except. Lancer : python3 s.py ; python3 -m venv .venv ; pip install paquet.
+HTML :: <!doctype html><html><head><title></title></head><body></body></html> ; h1-h6, p, a href, img src alt, ul/ol/li, div, span, button, input, form, table ; sémantique : header nav main section article footer.
+CSS :: sélecteur{propriété:valeur} ; .classe #id ; display:flex ou grid ; margin padding border ; @media (max-width:600px) ; :root{--ac:#f07a2a} avec var(--ac) ; transition et @keyframes.
+JavaScript :: let const ; (a)=>a*2 ; map filter reduce ; document.querySelector('#id') ; addEventListener('click', fn) ; fetch(url).then(r=>r.json()) ; async await ; JSON.parse ; localStorage.setItem.
+Swift :: let (constante) var (variable) ; String Int Double Bool Array Dictionary ; if let x = opt ; guard let ; func f(_ a:Int)->Int ; struct class enum ; SwiftUI : struct V: View { var body: some View { Text("Salut") } } avec @State, VStack, HStack, Button.
+Bash :: x=5 ; echo "$x" ; if [ -f f ]; then ... fi ; for f in *.txt; do ... done ; $(cmd) ; | > >> < ; #!/bin/bash ; chmod +x s.sh ; ./s.sh.
+C et C++ :: #include <stdio.h> ; int main(){printf("Salut\n");return 0;} ; pointeurs *p et &x ; gcc f.c -o f ; g++ ; make.
+`),
+D('🐧','Systèmes Linux et fonctions',`
+Ubuntu et Debian :: base Debian, paquets .deb, apt, systemd. Ubuntu a une version LTS tous les 2 ans ; Debian est très stable ; Raspberry Pi OS en dérive.
+Arch, Manjaro, EndeavourOS :: rolling release, pacman, dépôt AUR (yay, paru), wiki très complet ; archinstall pour installer ; Manjaro et EndeavourOS sont plus simples.
+Fedora, RHEL, Rocky, Alma :: dnf, rpm, SELinux, firewalld. Fedora est récente, RHEL et dérivés visent l’entreprise.
+openSUSE :: zypper, YaST ; Tumbleweed (rolling) ou Leap (stable) ; snapshots Btrfs.
+Alpine, Void, NixOS, Gentoo :: Alpine : musl et apk, minuscule, conteneurs. Void : runit et xbps. NixOS : configuration déclarative et retour arrière. Gentoo : compilation depuis les sources.
+Mint, Pop!_OS, Zorin :: dérivés Ubuntu pour débutants ; Pop!_OS gère bien NVIDIA et le tiling ; Zorin ressemble à Windows.
+Kali, Tails, Qubes :: Kali : tests d’intrusion ; Tails : anonymat via Tor, clé USB live ; Qubes : isolation par machines virtuelles.
+Environnements de bureau :: GNOME, KDE Plasma, XFCE, LXQt, Cinnamon, MATE ; tiling : i3, sway, Hyprland ; affichage X11 ou Wayland.
+Fonctions du système :: noyau, systemd (services), gestionnaire de paquets, pare-feu (ufw, nftables), SSH, cron, permissions rwx, conteneurs (Docker, Podman), sécurité SELinux ou AppArmor.
+`)];
+const CM=[
+['Linux : fichiers',`
+ls -la :: liste détaillée
+cd dossier :: changer de dossier
+pwd :: dossier courant
+cp -r a b :: copier
+mv a b :: déplacer ou renommer
+rm -rf d :: supprimer (irréversible)
+mkdir -p a/b :: créer des dossiers
+touch f :: créer un fichier
+cat f :: afficher
+less f :: lire page par page
+tail -f log :: suivre un journal
+find / -name "*.txt" :: chercher un fichier
+grep -rn "mot" . :: chercher du texte
+ln -s cible lien :: lien symbolique
+tar -czf a.tgz dossier :: archiver
+tar -xzf a.tgz :: extraire
+du -sh * :: taille des éléments
+df -h :: espace disque
+chmod 755 f :: droits
+chown user:grp f :: propriétaire
+sudo cmd :: exécuter en administrateur
+nano f :: éditeur simple (Ctrl+O, Ctrl+X)
+vim f :: i écrire, Esc, :wq enregistrer, :q! quitter
+`],['Linux : système et réseau',`
+uname -a :: noyau et machine
+uptime :: durée de fonctionnement
+htop :: processus en direct
+ps aux :: tous les processus
+kill -9 PID :: tuer un processus
+free -h :: mémoire
+lsblk :: disques
+lsusb :: périphériques USB
+lspci :: périphériques PCI
+lscpu :: processeur
+dmesg | tail :: messages du noyau
+journalctl -xe :: journaux système
+systemctl status srv :: état d’un service (start, stop, enable)
+reboot :: redémarrer
+poweroff :: éteindre
+ip a :: adresses réseau
+ip r :: routes
+ping -c 4 hote :: tester la connexion
+ss -tulpn :: ports ouverts
+curl -I url :: en-têtes HTTP
+wget url :: télécharger
+ssh user@hote :: connexion distante
+scp f user@hote:/dest :: copie distante
+rsync -avz src dst :: synchroniser
+nmcli device wifi list :: réseaux Wi-Fi
+nmcli device wifi connect SSID password MDP :: se connecter au Wi-Fi
+nmap -sn 192.168.1.0/24 :: machines du réseau
+tmux new -s nom :: session persistante (Ctrl+b d détacher)
+`],['Ubuntu et Debian',`
+sudo apt update :: actualiser la liste
+sudo apt upgrade :: mettre à jour
+sudo apt install paquet :: installer
+sudo apt remove paquet :: retirer (purge : avec la config)
+apt search mot :: chercher un paquet
+sudo apt autoremove :: nettoyer
+sudo dpkg -i f.deb :: installer un .deb
+dpkg -l | grep paquet :: vérifier l’installation
+sudo snap install paquet :: installer un snap
+sudo add-apt-repository ppa:x/y :: ajouter un PPA
+sudo do-release-upgrade :: changer de version d’Ubuntu
+sudo ufw allow 22 :: ouvrir un port (ufw enable)
+lsb_release -a :: version de la distribution
+`],['Arch Linux',`
+sudo pacman -Syu :: mise à jour complète
+sudo pacman -S paquet :: installer
+sudo pacman -Rns paquet :: retirer avec dépendances
+pacman -Ss mot :: chercher
+pacman -Qi paquet :: informations
+pacman -Qdtq | sudo pacman -Rns - :: supprimer les orphelins
+yay -S paquet :: installer depuis l’AUR
+sudo paccache -r :: vider le cache
+sudo systemctl enable --now NetworkManager :: activer le réseau
+archinstall :: installateur guidé
+sudo mkinitcpio -P :: régénérer l’initramfs
+sudo grub-mkconfig -o /boot/grub/grub.cfg :: régénérer GRUB
+sudo reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlist :: meilleurs miroirs
+`],['Fedora, openSUSE, Alpine, Void',`
+sudo dnf upgrade :: mettre à jour (Fedora)
+sudo dnf install paquet :: installer (Fedora)
+rpm -qa :: paquets installés (RPM)
+getenforce :: état de SELinux
+sudo firewall-cmd --add-service=ssh --permanent :: ouvrir SSH
+sudo zypper dup :: mise à niveau (openSUSE)
+sudo apk add paquet :: installer (Alpine)
+sudo xbps-install -Syu :: mise à jour (Void)
+`],['Windows (CMD et PowerShell)',`
+dir :: lister
+cd dossier :: changer de dossier
+cls :: effacer l’écran
+copy a b :: copier
+del f :: supprimer
+type f :: afficher un fichier
+ipconfig /all :: configuration réseau
+ping hote :: tester la connexion
+tracert hote :: route vers un hôte
+netstat -ano :: connexions et ports
+tasklist :: processus
+taskkill /PID n /F :: forcer l’arrêt
+sfc /scannow :: réparer les fichiers système
+DISM /Online /Cleanup-Image /RestoreHealth :: réparer l’image Windows
+chkdsk C: /f :: vérifier le disque
+shutdown /r /t 0 :: redémarrer
+systeminfo :: informations système
+winget install paquet :: installer
+winget upgrade --all :: tout mettre à jour
+Get-Process :: processus (PowerShell)
+Get-ChildItem :: lister (PowerShell)
+Get-Service :: services (PowerShell)
+Set-ExecutionPolicy RemoteSigned :: autoriser les scripts
+wsl --install :: installer Linux dans Windows
+`],['macOS',`
+brew install paquet :: installer avec Homebrew
+brew update && brew upgrade :: tout mettre à jour
+open . :: ouvrir le dossier dans Finder
+pbcopy et pbpaste :: presse-papiers
+sw_vers :: version de macOS
+diskutil list :: disques
+softwareupdate -l :: mises à jour
+caffeinate :: empêcher la veille
+say "texte" :: lire à voix haute
+xcode-select --install :: outils de développement
+`],['Git, Docker, Python, Node',`
+git clone url :: cloner
+git status :: état
+git add . :: indexer
+git commit -m "msg" :: valider
+git push :: envoyer
+git pull :: récupérer
+git log --oneline :: historique
+git checkout -b branche :: nouvelle branche
+docker ps :: conteneurs actifs
+docker run -it image :: lancer un conteneur
+docker compose up -d :: démarrer une pile
+python3 -m venv .venv :: environnement virtuel
+pip install paquet :: installer un paquet Python
+npm install :: installer les dépendances
+npx expo start :: lancer un projet Expo
+`],['Arduino, Raspberry, écran déporté',`
+arduino-cli board list :: cartes branchées
+vcgencmd measure_temp :: température du Raspberry
+raspi-config :: configuration du Raspberry
+uxplay :: recevoir l’AirPlay de l’iPhone sur l’ordinateur
+scrcpy :: afficher et contrôler un Android
+scrcpy --turn-screen-off :: éteindre l’écran du téléphone
+adb devices :: appareils Android
+adb connect IP:5555 :: connexion Android en Wi-Fi
+`]].map(([t,x])=>D('',t,x));
+const SEED=DOCS.flatMap(f=>f.a.map(([title,text])=>({id:'s:'+f.t+title,l:'fr',title,k:nz(title),text,seed:1})));
+
+async function search(t,n=1){
+ const k=nz(t),w=k.split(' ').filter(x=>x.length>1);if(!k)return[];
+ const rows=SEED.concat(await all()),sc=[];
+ for(const r of rows){let s=0;if(r.k==k)s=100;else if(r.k.includes(k))s=60-Math.min(r.k.length-k.length,30);else if(w.length&&w.every(x=>r.k.includes(x)))s=40;if(s)sc.push([s,r])}
+ if(!sc.length){const lt=t.toLowerCase();rows.forEach(r=>{if(r.text.toLowerCase().includes(lt))sc.push([10,r])})}
+ return sc.sort((a,b)=>b[0]-a[0]).slice(0,n).map(x=>x[1]);
+}
+const PACKS=[
+['Sciences',['physique','chimie','biologie','astronomie','mathématiques','géologie']],
+['Histoire',['histoire de France','Empire romain','Seconde Guerre mondiale','Révolution française','Moyen Âge','Antiquité']],
+['Géographie',['pays','capitale','fleuve','montagne','océan','île']],
+['Corps et santé',['anatomie','maladie','médicament','nutrition','cerveau','cœur']],
+['Technologie',['informatique','Internet','électronique','Linux','robotique','énergie']],
+['Culture',['littérature','peinture','musique','cinéma','philosophie','mythologie']],
+['Nature',['animal','plante','oiseau','mammifère','climat','écologie']]];
+async function wsearch(l,term,off){
+ const u=`https://${l}.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrsearch=${encodeURIComponent(term)}&gsrnamespace=0&gsrlimit=20&gsroffset=${off}&prop=extracts&exintro=1&explaintext=1&exlimit=max`;
+ const j=await (await fetch(u)).json();
+ return Object.values(j.query?.pages||{}).filter(p=>p.extract&&p.extract.length>40).map(p=>({id:l+':'+p.title,l,title:p.title,k:nz(p.title),text:p.extract.slice(0,1500)}));
+}
+let dl=null;
+async function download(jobs,l,pages){
+ if(dl){dl.stop=true;return}
+ dl={stop:false};let n=0,tot=jobs.length*pages,i=0;rk(true);
+ try{
+  for(const term of jobs){for(let p=0;p<pages;p++){
+   if(dl.stop)throw 'stop';
+   const rows=await wsearch(l,term,p*20);if(!rows.length)break;
+   await put(rows);n+=rows.length;i++;
+   $('#dlp').style.width=(100*i/tot)+'%';$('#dls').textContent=`${n} articles téléchargés — « ${term} »`;
+  }i+=pages-Math.min(pages,1)*0}
+  toast('Téléchargement terminé : '+n+' articles');
+ }catch(e){toast(e==='stop'?'Téléchargement arrêté':'Réseau indisponible ou bloqué par l’hébergeur de la page')}
+ dl=null;rk();
+}
+let fo=-1,cq='',co=-1;
+function rk(){
+ $('#t2').innerHTML=`<h2>${esc(S.tabs[2])}</h2><div class="card"><input placeholder="Chercher…" oninput="ksr(this.value)" value="${esc(window._kq||'')}"><div id="kr" class="mut" style="margin-top:8px"></div></div>`+DOCS.map((f,i)=>`<div class="card"><h3 onclick="fo=fo==${i}?-1:${i};rk()" style="cursor:pointer">${f.i} ${f.t} <span class="mut">(${f.a.length})</span></h3>${fo==i?f.a.map(a=>`<div class="res"><b>${esc(a[0])}</b><p>${esc(a[1])}</p></div>`).join(''):''}</div>`).join('');
+ ksr(window._kq||'');
+}
+const mono='font-family:ui-monospace,Menlo,monospace;color:var(--ac)';
+function cl(){const q=cq.toLowerCase();return CM.map((g,i)=>{const r=g.a.filter(x=>!q||(x[0]+x[1]).toLowerCase().includes(q));if(!r.length)return'';return `<div class="card"><h3 onclick="co=co==${i}?-1:${i};$('#cl').innerHTML=cl()" style="cursor:pointer">${g.t} <span class="mut">(${r.length})</span></h3>${q||co==i?r.map(x=>`<div class="res"><b style="${mono}">${esc(x[0])}</b><p>${esc(x[1])}</p></div>`).join(''):''}</div>`}).join('')}
+function cs(v){cq=v;$('#cl').innerHTML=cl()}
+const refHtml=()=>`<h2>${esc(S.tabs[1])}</h2><div class="card"><input placeholder="Chercher une commande…" oninput="cs(this.value)" value="${esc(cq)}"></div><div id="cl">${cl()}</div>`;
+async function ksr(q){window._kq=q;const el=$('#kr');if(!el)return;if(!q.trim()){el.innerHTML='';return}const r=await search(q,6);el.innerHTML=r.length?r.map(x=>`<div class="res"><b>${esc(x.title)}</b><p>${esc(x.text.slice(0,220))}…</p></div>`).join(''):'Aucun résultat dans la base locale.'}
+
+/* ---------- Assistant ---------- */
+const sents=t=>t.replace(/\s+/g,' ').split(/(?<=[.!?])\s+/).slice(0,3).join(' ').slice(0,420);
+async function answer(q){
+ const n=nz(q);
+ for(const c of C){if(c.t&&n.includes(nz(c.t))){if(c.k=='url'){setTimeout(()=>window.open(c.r,'_blank'),700);return 'J’ouvre '+c.t+'.'}return c.r}}
+ if(/qui es tu|tu es qui|comment tu t appelles/.test(n))return `Je suis ${S.name}, un assistant vocal qui fonctionne sans connexion.${S.user?' Ravi de te retrouver, '+S.user+'.':''}`;
+ if(/\bheure\b/.test(n)){const d=new Date();return `Il est ${d.getHours()} heures ${String(d.getMinutes()).padStart(2,'0')}.`}
+ if(/quel jour|quelle date|date d aujourd/.test(n))return 'Nous sommes le '+new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+'.';
+ if(/^(bonjour|salut|coucou|hello)/.test(n))return 'Bonjour'+(S.user?' '+S.user:'')+' ! Que puis-je faire pour toi ?';
+ let tp=n.replace(/^(parle moi (du|de la|de l|des|de|d)?|qui est|qui etait|c est quoi|qu est ce que|qu est ce qu|que sais tu (sur|de)|dis moi ce que tu sais sur|cherche|definition de)\s*/,'').replace(/^(le|la|les|l|un|une|du|de|des|d)\s+/,'').trim();
+ const r=(await search(tp,1))[0];
+ if(r)return sents(r.text);
+ if(navigator.onLine&&S.wifi){try{const j=await (await fetch(`https://fr.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(tp)}`)).json();if(j.extract)return sents(j.extract)}catch{}}
+ return `Je n’ai rien sur « ${tp} » pour l’instant. Télécharge des packs dans l’onglet ${S.tabs[2]}.`;
+}
+function showCap(q,a){$('#cap').innerHTML=q?`${esc(q)}<b>${esc(a)}</b>`:hint()}
+const hint=()=>`Dis quelque chose à ${esc(S.name)}. Ex : « Qui es-tu ? », « Parle-moi du Soleil », « Quelle heure est-il ? »`;
+async function ask(q){q=q.trim();if(!q)return;st='think';showCap(q,'…');let a;try{a=await answer(q)}catch{a='Une erreur est survenue.'}showCap(q,a);speak(a)}
+const VP=[['h1','Homme 1 · grave',['Thomas','Nicolas','Daniel'],.8,1],['h2','Homme 2 · posé',['Thomas','Nicolas','Daniel'],1,.95],['f1','Femme 1 · douce',['Amélie','Audrey','Aurélie'],1,1],['f2','Femme 2 · vive',['Audrey','Aurélie','Amélie'],1.15,1.05],['r1','Robot 1 · métal',['Zarvox','Fred','Ralph'],.3,.85],['r2','Robot 2 · synthé',['Trinoids','Fred','Ralph'],.1,1]];
+function speak(a){
+ if(!S.talk||!window.speechSynthesis){st='idle';return}
+ speechSynthesis.cancel();const p=VP.find(v=>v[0]==S.vp)||VP[0],u=new SpeechSynthesisUtterance(a),vs=speechSynthesis.getVoices();
+ u.lang=S.lang;u.pitch=p[3];u.rate=S.rate*p[4];
+ const v=p[2].map(n=>vs.find(x=>x.name.startsWith(n))).find(Boolean)||vs.find(x=>x.lang.startsWith(S.lang.slice(0,2)));
+ if(v)u.voice=v;u.onend=u.onerror=()=>{st='idle'};st='speak';speechSynthesis.speak(u)}
+let rec;
+function listen(){
+ if(st=='listen'){rec&&rec.stop();return}
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){toast('Micro indisponible ici : utilise le clavier');return}
+ window.speechSynthesis&&speechSynthesis.cancel();
+ rec=new SR();rec.lang=S.lang;rec.interimResults=true;let fin='';
+ rec.onresult=e=>{fin=[...e.results].map(r=>r[0].transcript).join('');$('#cap').textContent=fin};
+ rec.onend=()=>{st='idle';if(fin.trim())ask(fin);else showCap('','')};
+ rec.onerror=e=>{st='idle';toast('Micro : '+(e.error=='not-allowed'?'accès refusé':e.error))};
+ st='listen';$('#cap').textContent='J’écoute…';try{rec.start()}catch{st='idle'}
+}
+$('#orb').addEventListener('click',listen);
+$('#go').onclick=()=>{const q=$('#q');ask(q.value);q.value=''};
+$('#q').addEventListener('keydown',e=>{if(e.key=='Enter'){e.preventDefault();$('#go').click()}});
+
+/* ---------- Commandes ---------- */
+function rc(){
+ $('#t1').innerHTML=refHtml()+`<h2>Mes commandes</h2>
+ <div class="card"><h3>Nouvelle commande</h3><label>Quand je dis…</label><input id="ct1" placeholder="Ex : allume la lumière"><label>Action</label><select id="ck"><option value="say">Répondre par un texte</option><option value="url">Ouvrir un lien</option></select><label>Réponse ou adresse</label><input id="cr" placeholder="Ex : C’est fait"><button class="b" style="margin-top:14px;width:100%" onclick="addC()">Ajouter</button></div>
+ <div class="card"><h3>Mes commandes (${C.length})</h3>${C.length?C.map((c,i)=>`<div class="pk"><div style="min-width:0"><b>${esc(c.t)}</b><div class="mut" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.k=='url'?'Ouvre ':''}${esc(c.r)}</div></div><button class="b g" onclick="delC(${i})">Supprimer</button></div>`).join(''):'<div class="mut">Aucune commande personnalisée.</div>'}</div>
+ <div class="card"><h3>Intégrées</h3><div class="mut">« Qui es-tu ? », « Quelle heure est-il ? », « Quel jour sommes-nous ? », « Parle-moi de… », « C’est quoi… ».</div></div>`;
+}
+function addC(){const t=$('#ct1').value.trim(),r=$('#cr').value.trim(),k=$('#ck').value;if(!t||!r){toast('Remplis la phrase et la réponse');return}if(k=='url'&&!/^https?:\/\//.test(r)){toast('L’adresse doit commencer par https://');return}C.push({t,r,k});sv('px_c',C);rc()}
+function delC(i){C.splice(i,1);sv('px_c',C);rc()}
+
+/* ---------- Réglages ---------- */
+const tg=(k,l)=>`<label class="row" style="justify-content:space-between;color:#d9d9d9;margin:10px 0"><span style="flex:3">${l}</span><input type="checkbox" ${S[k]?'checked':''} onchange="U('${k}',this.checked);net()" style="flex:0 0 26px;height:26px"></label>`;
+function sc(n){toast('Raccourci « '+n+' »…');location.href='shortcuts://run-shortcut?name='+encodeURIComponent(n)}
+function rset(){
+ $('#t3').innerHTML=`<h2>${esc(S.tabs[3])}</h2><div class="card"><h3>Voix</h3><div class="row" style="flex-wrap:wrap">${VP.map(v=>`<button class="b ${S.vp==v[0]?'':'g'}" style="flex:1 1 45%" onclick="U('vp','${v[0]}');rset();speak('Bonjour, je suis '+S.name)">${v[1]}</button>`).join('')}</div>
+ <label>Langue</label><select onchange="U('lang',this.value)">${[['fr-FR','Français'],['en-US','English'],['es-ES','Español'],['de-DE','Deutsch']].map(l=>`<option value="${l[0]}" ${S.lang==l[0]?'selected':''}>${l[1]}</option>`).join('')}</select>
+ <label>Vitesse : ${S.rate}</label><input type="range" min=".6" max="1.6" step=".1" value="${S.rate}" oninput="U('rate',+this.value);this.previousElementSibling.textContent='Vitesse : '+this.value">${tg('talk','Répondre à voix haute')}
+ <div class="mut">Les voix dépendent de celles installées sur l’iPhone (Réglages, Accessibilité, Contenu énoncé, Voix).</div></div>
+ <div class="card"><h3>Connexions</h3>${tg('wifi','Réseau de l’app (Wi-Fi, données)')}${tg('bt','Bluetooth')}<div class="mut">Safari ne donne pas accès au Bluetooth : ce réglage est mémorisé pour une version native.</div></div>
+ <div class="card"><h3>Raccourcis</h3><div class="row"><button class="b" onclick="sc('UxPlay')">UxPlay</button><button class="b" onclick="sc('Scrcpy')">Scrcpy</button></div><div class="mut" style="margin-top:8px">Crée dans l’app Raccourcis deux raccourcis nommés UxPlay et Scrcpy (action « Exécuter le script via SSH » vers ton ordinateur).</div></div>`}
+let ID=ld('px_i',['PX — l’orbe d’ambre','Générique d’ouverture en 2,39:1']);
+const ih=()=>`<div class="card"><h3>Idées · cinéma</h3>${tg('cine','Ambiance cinéma (vignette et grain)')}${ID.map((x,i)=>`<div class="cn" style="margin-bottom:12px"><span onclick="idDel(${i})" style="position:absolute;top:2px;right:12px;color:#777;z-index:2;font-size:20px">×</span><div><b>${esc(x)}</b><i></i></div></div>`).join('')}<div class="row"><input id="ni" placeholder="Nouvelle idée…"><button class="b" style="flex:0 0 auto" onclick="idAdd()">Ajouter</button></div><div class="mut" style="margin-top:8px">PX v0.2</div></div>`;
+function idAdd(){const v=$('#ni').value.trim();if(!v)return;ID.push(v);sv('px_i',ID);rl()}
+function idDel(i){ID.splice(i,1);sv('px_i',ID);rl()}
+if(window.speechSynthesis)speechSynthesis.onvoiceschanged=()=>{if(cur==3)rset()};
+
+/* ---------- LCN : données et personnalisation ---------- */
+const SW=['#f07a2a','#ff4d6d','#35d0ba','#4da3ff','#b07cff','#f5d547','#ffffff'];
+function U(k,v){S[k]=v;sv('px_s',S);ap()}
+function UT(i,v){S.tabs[i]=v||DS.tabs[i];sv('px_s',S);nav()}
+function rl(){
+ $('#t4').innerHTML=`<h2>${esc(S.tabs[4])}</h2>
+ <div class="card"><h3>Profil</h3><label>Ton prénom</label><input value="${esc(S.user)}" oninput="U('user',this.value)" placeholder="Prénom">
+ <label>Nom de l’assistant</label><input value="${esc(S.name)}" oninput="U('name',this.value||'PX')">
+ <label>Sous-titre</label><input value="${esc(S.sub)}" oninput="U('sub',this.value)"></div>
+ <div class="card"><h3>Couleur</h3><input type="color" id="cc" value="${S.ac}" oninput="U('ac',this.value)"><div class="sw">${SW.map(c=>`<span style="background:${c}" onclick="U('ac','${c}');$('#cc').value='${c}'"></span>`).join('')}</div></div>
+ <div class="card"><h3>Sphère</h3><label>Densité des alvéoles</label><select onchange="U('detail',+this.value)"><option value="1" ${S.detail==1?'selected':''}>Large</option><option value="2" ${S.detail==2?'selected':''}>Moyenne</option><option value="3" ${S.detail==3?'selected':''}>Fine</option></select>
+ <label>Vitesse de rotation</label><input type="range" min=".2" max="3" step=".1" value="${S.speed}" oninput="U('speed',+this.value)">
+ <label>Épaisseur du trait</label><input type="range" min=".5" max="3" step=".1" value="${S.lw}" oninput="U('lw',+this.value)"></div>
+ <div class="card"><h3>Noms des onglets</h3>${S.tabs.map((n,i)=>`<input style="margin-bottom:8px" value="${esc(n)}" oninput="UT(${i},this.value)">`).join('')}</div>
+ ${ih()}<div class="card"><h3>Mes données</h3><div class="mut">Prénom, réglages, couleurs et commandes. Tout reste sur cet appareil.</div>
+ <div class="row" style="margin-top:12px"><button class="b" onclick="ex()">Exporter</button><button class="b g" onclick="im()">Importer</button></div>
+ <textarea id="dj" rows="5" style="margin-top:10px;font-size:13px" placeholder="Colle ici une sauvegarde à importer"></textarea>
+ <button class="b g" style="margin-top:12px;width:100%" id="rz" onclick="rz()">Tout réinitialiser</button></div>`;
+}
+function ex(){const j=JSON.stringify({s:S,c:C});$('#dj').value=j;navigator.clipboard?.writeText(j).then(()=>toast('Sauvegarde copiée')).catch(()=>toast('Sélectionne le texte pour le copier'))}
+function im(){try{const o=JSON.parse($('#dj').value);S={...DS,...o.s};C=o.c||[];sv('px_s',S);sv('px_c',C);ap();rl();toast('Données importées')}catch{toast('Sauvegarde illisible')}}
+let rzc=0;function rz(){const b=$('#rz');if(rzc){S={...DS};C=[];sv('px_s',S);sv('px_c',C);rzc=0;ap();rl();toast('Réinitialisé')}else{rzc=1;b.textContent='Confirmer la réinitialisation ?';setTimeout(()=>{rzc=0;if($('#rz'))$('#rz').textContent='Tout réinitialiser'},3000)}}
+
+/* ---------- Application ---------- */
+function ap(){
+ document.documentElement.style.setProperty('--ac',S.ac);
+ $('#ttl').textContent=S.name;$('#sub').textContent=S.sub;document.title=S.name;
+ $('#q').placeholder='Parle à '+S.name+'…';
+ if(S.detail!=bd){bd=S.detail;segs=build(bd)}
+ if(st=='idle'&&!$('#cap').dataset.u)$('#cap').innerHTML=hint();
+ document.body.classList.toggle('cine',!!S.cine);nav();net();
+}
+function net(){const o=navigator.onLine&&S.wifi;$('#pill').classList.toggle('on',o);$('#pt').textContent=o?'ONLINE':'OFFLINE'}
+addEventListener('online',net);addEventListener('offline',net);
+try{navigator.storage?.persist?.()}catch{}
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+ap();rs();requestAnimationFrame(fr);
+</script>
+</body></html>
